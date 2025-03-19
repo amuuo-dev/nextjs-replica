@@ -1,9 +1,23 @@
 // server.mjs
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 
 const server = createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Hello World!\n");
+  const outputFile = path.join(process.cwd(), "/pages/index.jsx");
+  let varData;
+  try {
+    const data = readFileSync(outputFile, "utf-8");
+    const data1 = data.split("return");
+    const data2 = data1[1].split("(");
+    const data3 = data2[1].split(")");
+    varData = data3[0];
+  } catch (error) {
+    console.error(error);
+  }
+
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.end(varData);
 });
 
 // starts a simple http server locally on port 3000
